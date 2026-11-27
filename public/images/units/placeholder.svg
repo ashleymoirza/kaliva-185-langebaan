@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900" role="img" aria-label="Kaliva 185">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b6ea8"/>
+      <stop offset="1" stop-color="#0d3f80"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="900" fill="url(#g)"/>
+  <circle cx="980" cy="200" r="90" fill="#ffffff" opacity="0.25"/>
+  <path d="M0 620 Q300 560 600 620 T1200 600 V900 H0 Z" fill="#ffffff" opacity="0.18"/>
+  <path d="M0 700 Q300 650 600 700 T1200 680 V900 H0 Z" fill="#ffffff" opacity="0.14"/>
+  <text x="60" y="430" font-family="Georgia, serif" font-size="66" font-weight="bold" fill="#ffffff">Kaliva 185</text>
+  <text x="62" y="486" font-family="Helvetica, Arial, sans-serif" font-size="30" fill="#ffffff" opacity="0.85">Club Mykonos · Langebaan</text>
+</svg>

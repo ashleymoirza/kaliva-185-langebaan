@@ -1,0 +1,203 @@
+@import "tailwindcss";
+
+@theme {
+  /* Kaliva 185 Langebaan — Aegean/Mykonos brand palette */
+  /* Deep navy for headings (Stripe-inspired warmth), not pure black */
+  --color-brand-50: #eff6ff;
+  --color-brand-100: #dbeafe;
+  --color-brand-200: #bfdbfe;
+  --color-brand-300: #93c5fd;
+  --color-brand-400: #60a5fa;
+  --color-brand-500: #3b82f6;
+  --color-brand-600: #2563eb;
+  --color-brand-700: #1d4ed8;
+  --color-brand-800: #1e40af;
+  --color-brand-900: #1e3a8a;
+  --color-brand-950: #172554;
+
+  /* Aegean accent - warm coral/terracotta for CTAs (Airbnb-inspired warmth) */
+  --color-accent-50: #fff7ed;
+  --color-accent-100: #ffedd5;
+  --color-accent-200: #fed7aa;
+  --color-accent-300: #fdba74;
+  --color-accent-400: #fb923c;
+  --color-accent-500: #f97316;
+  --color-accent-600: #ea580c;
+  --color-accent-700: #c2410c;
+  --color-accent-800: #9a3412;
+  --color-accent-900: #7c2d12;
+
+  /* Sea/teal for secondary actions and highlights */
+  --color-sea-50: #f0fdfa;
+  --color-sea-100: #ccfbf1;
+  --color-sea-200: #99f6e4;
+  --color-sea-300: #5eead4;
+  --color-sea-400: #2dd4bf;
+  --color-sea-500: #14b8a6;
+  --color-sea-600: #0d9488;
+  --color-sea-700: #0f766e;
+  --color-sea-800: #115e59;
+  --color-sea-900: #134e4a;
+
+  /* Sand/warm neutral for backgrounds */
+  --color-sand-50: #fdfaf6;
+  --color-sand-100: #f7f1e3;
+  --color-sand-200: #efe3c8;
+  --color-sand-300: #e3cfa1;
+  --color-sand-400: #d4b882;
+  --color-sand-500: #c19a5b;
+  --color-sand-600: #a87d48;
+  --color-sand-700: #8b623a;
+  --color-sand-800: #724e34;
+  --color-sand-900: #5f4130;
+
+  /* Semantic colors */
+  --color-success-50: #f0fdf4;
+  --color-success-500: #22c55e;
+  --color-success-600: #16a34a;
+  --color-success-700: #15803d;
+
+  --color-warning-50: #fffbeb;
+  --color-warning-500: #f59e0b;
+  --color-warning-600: #d97706;
+
+  --color-error-50: #fef2f2;
+  --color-error-500: #ef4444;
+  --color-error-600: #dc2626;
+  --color-error-700: #b91c1c;
+
+  /* Typography - Geist from Google Fonts */
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+  /* Shadows - Airbnb-inspired three-layer warm shadows */
+  --shadow-card: rgba(0, 0, 0, 0.02) 0px 0px 0px 1px, rgba(0, 0, 0, 0.04) 0px 2px 6px, rgba(0, 0, 0, 0.1) 0px 4px 8px;
+  --shadow-card-hover: rgba(0, 0, 0, 0.04) 0px 0px 0px 1px, rgba(0, 0, 0, 0.06) 0px 4px 12px, rgba(0, 0, 0, 0.12) 0px 8px 16px;
+  --shadow-elevated: rgba(0, 0, 0, 0.06) 0px 0px 0px 1px, rgba(0, 0, 0, 0.08) 0px 8px 20px, rgba(0, 0, 0, 0.14) 0px 12px 24px;
+  --shadow-sticky: rgba(0, 0, 0, 0.05) 0px 4px 12px;
+
+  /* Border radius scale */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-2xl: 32px;
+  --radius-full: 9999px;
+
+  /* Spacing scale */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #0f172a; /* Deep navy, not black */
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* Focus visibility for accessibility */
+:focus-visible {
+  outline: 2px solid var(--color-brand-500);
+  outline-offset: 2px;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-brand-200);
+  border-radius: var(--radius-full);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-brand-300);
+}
+
+/* Selection */
+::selection {
+  background: var(--color-brand-200);
+  color: var(--color-brand-900);
+}
+
+/* Utility classes for the new design system */
+.shadow-card {
+  box-shadow: var(--shadow-card);
+}
+.shadow-card-hover {
+  box-shadow: var(--shadow-card-hover);
+}
+.shadow-elevated {
+  box-shadow: var(--shadow-elevated);
+}
+.shadow-sticky {
+  box-shadow: var(--shadow-sticky);
+}
+
+.transition-shadow-card {
+  transition: box-shadow 200ms ease, transform 200ms ease;
+}
+.transition-shadow-card:hover {
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-2px);
+}
+
+/* Text gradient for hero headings */
+.text-gradient-brand {
+  background: linear-gradient(135deg, var(--color-brand-900) 0%, var(--color-brand-600) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Glassmorphism for sticky nav */
+.glass {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Image hover zoom */
+.zoom-hover img {
+  transition: transform 400ms ease;
+}
+.zoom-hover:hover img {
+  transform: scale(1.05);
+}

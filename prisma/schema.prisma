@@ -1,0 +1,216 @@
+// Kaliva 185 Langebaan — PostgreSQL schema.
+// Dates are stored as ISO "YYYY-MM-DD" strings to avoid timezone drift on
+// check-in/check-out (a booking is a calendar-day concept, not an instant).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Prisma 7 reads the connection URL from prisma.config.ts (and the runtime
+// client connects via a driver adapter). Keeping the datasource block minimal.
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  guest
+  admin
+}
+
+enum BookingStatus {
+  pending
+  confirmed
+  cancelled
+}
+
+enum PaymentMethod {
+  payfast
+  stripe
+  ozow
+  enquiry
+}
+
+enum PaymentStatus {
+  pending
+  completed
+  failed
+  cancelled
+  refunded
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  passwordHash  String?
+  name          String?
+  phone         String?
+  role          UserRole  @default(guest)
+  emailVerified DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  bookings      Booking[]
+  payments      Payment[]
+}
+
+model Unit {
+  id             String    @id @default(cuid())
+  slug           String    @unique
+  name           String
+  description    String
+  bedrooms       Int
+  sleeps         Int
+  bathrooms      Int
+  sizeSqm        Int
+  view           String
+  basePriceCents Int
+  amenities      String[]
+  images         String[]
+  active         Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+  bookings       Booking[]
+  blocks         BlockedDate[]
+}
+
+model Booking {
+  id            String        @id @default(cuid())
+  userId        String?
+  user          User?         @relation(fields: [userId], references: [id])
+  unitSlug      String
+  unit          Unit?         @relation(fields: [unitSlug], references: [slug])
+  checkIn       String
+  checkOut      String
+  guests        Int
+  name          String
+  email         String
+  phone         String
+  requests      String        @default("")
+  referral      String        @default("")
+  totalCents    Int
+  depositCents  Int?
+  status        BookingStatus @default(pending)
+  paymentMethod PaymentMethod @default(enquiry)
+  paymentRef    String?
+  createdAt     DateTime      @default(now())
+
+  messages      EnquiryMessage[]
+  payments      Payment[]
+
+  @@index([unitSlug, checkIn, checkOut])
+  @@index([status])
+  @@index([userId])
+}
+
+// CRM: the message thread for an enquiry/booking ticket.
+model EnquiryMessage {
+  id        String   @id @default(cuid())
+  bookingId String
+  booking   Booking? @relation(fields: [bookingId], references: [id])
+  author    String
+  body      String
+  createdAt DateTime @default(now())
+
+  @@index([bookingId])
+}
+
+model BlockedDate {
+  id       String @id @default(cuid())
+  unitSlug String
+  unit     Unit?  @relation(fields: [unitSlug], references: [slug])
+  date     String
+  reason   String @default("Blocked by admin")
+
+  @@unique([unitSlug, date])
+}
+
+// A single JSON blob holding the admin-tunable pricing configuration.
+model PricingConfig {
+  id        String   @id @default("default")
+  data      Json
+  updatedAt DateTime @updatedAt
+}
+
+// Referral/UTM tracking for Meta ads, keyed by the UTM parameters captured.
+model ReferralHit {
+  id        String   @id @default(cuid())
+  utmSource String?
+  utmMedium String?
+  utmCampaign String?
+  utmContent String?
+  utmTerm   String?
+  path      String
+  createdAt DateTime @default(now())
+
+  @@index([utmCampaign])
+}
+
+// Drag-and-drop builder: the page layout JSON (draft + published).
+model SitePage {
+  slug      String   @id
+  draft     Json
+  published Json?
+  updatedAt DateTime @updatedAt
+}
+
+// Guest houses marketed on the platform.
+model Property {
+  slug        String   @id
+  name        String
+  tagline     String   @default("")
+  location    String   @default("")
+  description String   @default("")
+  images      String[]
+  amenities   String[]
+  featured    Boolean  @default(false)
+  active      Boolean  @default(true)
+  updatedAt   DateTime @updatedAt
+}
+
+// Payment model with Ozow integration fields
+model Payment {
+  id              String        @id @default(cuid())
+  bookingId       String
+  booking         Booking?      @relation(fields: [bookingId], references: [id])
+  userId          String
+  user            User?         @relation(fields: [userId], references: [id])
+  amountCents     Int
+  currency        String        @default("ZAR")
+  method          PaymentMethod
+  status          PaymentStatus @default(pending)
+  reference       String        @unique // Our internal reference (e.g., booking ID + timestamp)
+
+  // Ozow-specific fields
+  ozowPaymentId   String?       // Ozow's payment ID (returned after initiation)
+  ozowSiteCode    String?       // Ozow site code for this transaction
+  ozowCountryCode String?       @default("ZA")
+  ozowCurrencyCode String?      @default("ZAR")
+  ozowAmount      Decimal?      @db.Decimal(10, 2) // Amount in Ozow format (major units, e.g., 1234.56)
+  ozowIsTest      Boolean?      @default(true)
+  ozowNotifyUrl   String?       // Webhook URL for Ozow callbacks
+  ozowReturnUrl   String?       // Return URL after payment
+  ozowCancelUrl   String?       // Cancel URL
+  ozowErrorUrl    String?       // Error URL
+  ozowHash        String?       // Ozow hash for verification
+  ozowHashCheck   String?       // Ozow hash returned in callback for verification
+
+  // PayFast-specific fields (kept for backward compatibility)
+  payfastPaymentId String?
+  payfastSignature String?
+
+  // Stripe-specific fields (kept for backward compatibility)
+  stripeSessionId  String?
+  stripePaymentIntentId String?
+
+  // Common fields
+  gatewayResponse Json?         // Raw gateway response for debugging
+  failureReason   String?
+  processedAt     DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([bookingId])
+  @@index([userId])
+  @@index([reference])
+  @@index([status])
+  @@index([ozowPaymentId])
+}

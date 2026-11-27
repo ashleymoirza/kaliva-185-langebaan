@@ -1,0 +1,43 @@
+{
+  "name": "kaliva-185-langebaan",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "seed": "npx tsx prisma/seed.ts",
+    "worker": "npx tsx lib/queue/worker-entry.ts",
+    "worker:dev": "npx tsx --watch lib/queue/worker-entry.ts",
+    "test:booking": "npx tsx tests/booking-flow.test.ts"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.10.1",
+    "@prisma/client": "^7.10.1",
+    "bcryptjs": "^3.0.3",
+    "bullmq": "^6.7.10",
+    "framer-motion": "^14.14.0",
+    "ioredis": "^6.1.0",
+    "jose": "^6.2.18",
+    "next": "16.4.6",
+    "pg": "^8.23.1",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@tailwindcss/turbopack": "4.3.3",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.6",
+    "prisma": "^7.10.1",
+    "tailwindcss": "4.3.3",
+    "typescript": "^5"
+  }
+}

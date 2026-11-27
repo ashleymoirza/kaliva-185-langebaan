@@ -1,0 +1,45 @@
+[Unit]
+Description=Kaliva 185 Langebaan Next.js Application (Production)
+Documentation=https://github.com/kaliva-185/kaliva-185-langebaan
+After=network.target postgresql.service redis.service ollama.service
+Wants=postgresql.service redis.service ollama.service
+
+[Service]
+Type=simple
+User=kaliva
+Group=kaliva
+WorkingDirectory=/var/www/kaliva185-prod
+Environment=NODE_ENV=production
+Environment=PORT=3000
+# Environment variables loaded from /etc/kaliva185/production.env
+EnvironmentFile=-/etc/kaliva185/production.env
+ExecStart=/usr/bin/node server.js
+Restart=on-failure
+RestartSec=5
+RestartPreventExitStatus=255
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=kaliva185-prod
+
+# Resource limits (adjust based on VPS specs)
+LimitNOFILE=65536
+LimitNPROC=4096
+MemoryLimit=2G
+CPUQuota=200%
+
+# Security hardening
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/var/www/kaliva185-prod /var/log/kaliva185 /tmp
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+
+# Restart on crash
+StartLimitIntervalSec=60
+StartLimitBurst=3
+
+[Install]
+WantedBy=multi-user.target

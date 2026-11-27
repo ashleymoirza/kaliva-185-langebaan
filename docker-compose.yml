@@ -1,0 +1,332 @@
+# Kaliva 185 Langebaan — Docker Compose for VPS Deployment
+# This file defines the full infrastructure stack for the VPS
+# Usage: docker-compose -f docker-compose.yml up -d
+
+version: '3.8'
+
+services:
+  # ─────────────────────────────────────────────────────────────
+  # PostgreSQL Database
+  # ─────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: kaliva185-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: kaliva
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: kaliva185_prod
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d:ro
+    networks:
+      - kaliva-internal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kaliva -d kaliva185_prod"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 1G
+
+  # ─────────────────────────────────────────────────────────────
+  # Redis (for BullMQ queues)
+  # ─────────────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: kaliva185-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    networks:
+      - kaliva-internal
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1G
+        reservations:
+          cpus: '0.25'
+          memory: 512M
+
+  # ─────────────────────────────────────────────────────────────
+  # Ollama (Local AI for welcome messages)
+  # ─────────────────────────────────────────────────────────────
+  ollama:
+    image: ollama/ollama:latest
+    container_name: kaliva185-ollama
+    restart: unless-stopped
+    environment:
+      OLLAMA_HOST: 0.0.0.0:11434
+      OLLAMA_ORIGINS: "*"
+      OLLAMA_KEEP_ALIVE: "24h"
+      OLLAMA_NUM_PARALLEL: "2"
+      OLLAMA_MAX_LOADED_MODELS: "2"
+      OLLAMA_FLASH_ATTENTION: "1"
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - kaliva-internal
+    # GPU support (uncomment if VPS has GPU)
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 8G
+        reservations:
+          cpus: '2.0'
+          memory: 4G
+
+  # ─────────────────────────────────────────────────────────────
+  # Next.js Application (Staging)
+  # ─────────────────────────────────────────────────────────────
+  app-staging:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runner
+    container_name: kaliva185-app-staging
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: postgresql://kaliva:${POSTGRES_PASSWORD}@postgres:5432/kaliva185_staging?schema=public
+      REDIS_URL: redis://redis:6379
+      OLLAMA_BASE_URL: http://ollama:11434
+      # Other env vars loaded from .env.staging file
+    env_file:
+      - .env.staging
+    networks:
+      - kaliva-internal
+      - kaliva-external
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      ollama:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '1.0'
+          memory: 1G
+
+  # ─────────────────────────────────────────────────────────────
+  # Next.js Application (Production)
+  # ─────────────────────────────────────────────────────────────
+  app-production:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runner
+    container_name: kaliva185-app-production
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: postgresql://kaliva:${POSTGRES_PASSWORD}@postgres:5432/kaliva185_prod?schema=public
+      REDIS_URL: redis://redis:6379
+      OLLAMA_BASE_URL: http://ollama:11434
+      # Other env vars loaded from .env.production file
+    env_file:
+      - .env.production
+    networks:
+      - kaliva-internal
+      - kaliva-external
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      ollama:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '1.0'
+          memory: 1G
+
+  # ─────────────────────────────────────────────────────────────
+  # Nginx Reverse Proxy
+  # ─────────────────────────────────────────────────────────────
+  nginx:
+    image: nginx:alpine
+    container_name: kaliva185-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/kaliva185.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/letsencrypt:ro
+      - ./public:/var/www/kaliva185/public:ro
+      - ./nginx/www:/var/www/letsencrypt:ro
+    networks:
+      - kaliva-external
+    depends_on:
+      - app-staging
+      - app-production
+    healthcheck:
+      test: ["CMD", "nginx", "-t"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+
+  # ─────────────────────────────────────────────────────────────
+  # Worker (Background Jobs)
+  # ─────────────────────────────────────────────────────────────
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runner
+    container_name: kaliva185-worker
+    restart: unless-stopped
+    command: ["npx", "tsx", "lib/queue/worker-entry.ts"]
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://kaliva:${POSTGRES_PASSWORD}@postgres:5432/kaliva185_prod?schema=public
+      REDIS_URL: redis://redis:6379
+      OLLAMA_BASE_URL: http://ollama:11434
+    env_file:
+      - .env.production
+    networks:
+      - kaliva-internal
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      ollama:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+  # ─────────────────────────────────────────────────────────────
+  # pgAdmin (Database Management) - Optional
+  # ─────────────────────────────────────────────────────────────
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: kaliva185-pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@kaliva185.duckdns.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - kaliva-external
+    depends_on:
+      - postgres
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+
+  # ─────────────────────────────────────────────────────────────
+  # Redis Commander (Redis Management) - Optional
+  # ─────────────────────────────────────────────────────────────
+  redis-commander:
+    image: ghcr.io/joeferner/redis-commander:latest
+    container_name: kaliva185-redis-commander
+    restart: unless-stopped
+    environment:
+      REDIS_HOSTS: "local:redis:6379"
+      HTTP_USER: ${REDIS_COMMANDER_USER:-admin}
+      HTTP_PASSWORD: ${REDIS_COMMANDER_PASSWORD}
+    networks:
+      - kaliva-external
+    depends_on:
+      - redis
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
+
+networks:
+  kaliva-internal:
+    driver: bridge
+    internal: true  # No external access
+  kaliva-external:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  ollama_data:
+    driver: local
+  pgadmin_data:
+    driver: local

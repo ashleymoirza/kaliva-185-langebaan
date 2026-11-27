@@ -11,6 +11,8 @@ const SIZES: Record<ContainerSize, string> = {
   full: "max-w-full",
 };
 
+const BASE = "mx-auto w-full px-4 sm:px-6 lg:px-8";
+
 export default function Container({
   children,
   className,
@@ -23,8 +25,6 @@ export default function Container({
   size?: ContainerSize;
 }) {
   return (
-    <As className={cn("mx-auto w-full px-4 sm:px-6 lg:px-8", SIZES[size], className)}>
-      {children}
-    </As>
+    <As className={cn(BASE, SIZES[size], className)}>{children}</As>
   );
 }

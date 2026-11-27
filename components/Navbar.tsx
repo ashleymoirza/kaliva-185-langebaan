@@ -2,32 +2,42 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { NAV_LINKS, SITE } from "@/lib/site";
 import { cn } from "@/lib/utils";
-import { LinkButton } from "@/components/ui/Button";
+import { LinkButton, Button } from "@/components/ui/Button";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
 
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 10);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
     <header
       className={cn(
         "sticky top-0 z-50 transition-all duration-200",
         scrolled
-          ? "glass border-b border-brand-100 shadow-sticky"
-          : "bg-white border-b border-brand-100"
+          ? "glass border-b border-sand-200 shadow-sticky"
+          : "bg-white border-b border-sand-200"
       )}
-      onScroll={() => setScrolled(window.scrollY > 10)}
     >
       <nav className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-3.5 sm:px-6 lg:px-8">
-        <Link href="/" className="flex items-center gap-2.5 shrink-0" onClick={() => setOpen(false)} aria-label={`${SITE.name} - Home`}>
+        <Link
+          href="/"
+          className="flex items-center gap-2.5 shrink-0"
+          onClick={() => setOpen(false)}
+          aria-label={`${SITE.name} - Home`}
+        >
           <span className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-brand-600 to-brand-700 font-bold text-white shadow-lg">
             K
           </span>
-          <span className="leading-tight hidden sm:block">
+          <span className="leading-tight hidden sm:block font-airbnb">
             <span className="block text-sm font-bold text-slate-900 tracking-tight">{SITE.shortName}</span>
             <span className="block text-[10px] text-slate-500 font-medium">{SITE.resort}</span>
           </span>
@@ -39,7 +49,7 @@ export default function Navbar() {
               <Link
                 href={link.href}
                 className={cn(
-                  "rounded-xl px-4 py-2.5 text-sm font-medium transition-all duration-150",
+                  "rounded-xl px-4 py-2.5 text-sm font-medium transition-all duration-150 font-airbnb",
                   pathname === link.href
                     ? "bg-brand-50 text-brand-800 shadow-sm"
                     : "text-slate-600 hover:text-brand-800 hover:bg-brand-50"
@@ -71,7 +81,7 @@ export default function Navbar() {
       </nav>
 
       {open && (
-        <div className="border-t border-brand-100 bg-white md:hidden animate-slide-down">
+        <div className="border-t border-sand-200 bg-white md:hidden animate-slide-down">
           <ul className="mx-auto flex w-full max-w-7xl flex-col px-4 py-4 gap-1">
             {NAV_LINKS.map((link) => (
               <li key={link.href}>
@@ -79,7 +89,7 @@ export default function Navbar() {
                   href={link.href}
                   onClick={() => setOpen(false)}
                   className={cn(
-                    "block rounded-xl px-4 py-3.5 text-base font-medium transition-colors",
+                    "block rounded-xl px-4 py-3.5 text-base font-medium transition-colors font-airbnb",
                     pathname === link.href
                       ? "bg-brand-50 text-brand-800"
                       : "text-slate-700 hover:bg-brand-50 hover:text-brand-800"

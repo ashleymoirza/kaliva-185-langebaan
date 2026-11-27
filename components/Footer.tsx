@@ -4,19 +4,19 @@ import Container from "@/components/ui/Container";
 
 export default function Footer() {
   return (
-    <footer className="border-t border-brand-100 bg-sand-50 mt-20">
+    <footer className="border-t border-sand-200 bg-sand-50 mt-20">
       <Container size="xl" className="grid gap-10 py-16 sm:grid-cols-2 lg:grid-cols-5">
         <div className="lg:col-span-2">
           <Link href="/" className="flex items-center gap-2.5 mb-6" aria-label={`${SITE.name} - Home`}>
             <span className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-brand-600 to-brand-700 font-bold text-white">
               K
             </span>
-            <span className="leading-tight">
+            <span className="leading-tight font-airbnb">
               <span className="block text-sm font-bold text-slate-900">{SITE.shortName}</span>
               <span className="block text-[10px] text-slate-500 font-medium">{SITE.resort}</span>
             </span>
           </Link>
-          <p className="max-w-xs text-sm text-slate-600 leading-relaxed">
+          <p className="max-w-xs text-sm text-slate-600 leading-relaxed font-airbnb">
             {SITE.tagline}. Privately owned, 6-sleeper beachfront apartment with 3 bedrooms and private braai.
             Direct booking for the best price.
           </p>
@@ -33,8 +33,8 @@ export default function Footer() {
         </div>
 
         <div>
-          <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-wide mb-4">Explore</h3>
-          <ul className="space-y-3 text-sm text-slate-600">
+          <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-wide mb-4 font-airbnb">Explore</h3>
+          <ul className="space-y-3 text-sm text-slate-600 font-airbnb">
             {NAV_LINKS.map((l) => (
               <li key={l.href}>
                 <Link href={l.href} className="hover:text-brand-700 transition-colors flex items-center gap-2">
@@ -47,8 +47,8 @@ export default function Footer() {
         </div>
 
         <div>
-          <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-wide mb-4">Contact</h3>
-          <ul className="space-y-3 text-sm text-slate-600">
+          <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-wide mb-4 font-airbnb">Contact</h3>
+          <ul className="space-y-3 text-sm text-slate-600 font-airbnb">
             <li className="flex items-start gap-2">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-slate-400 shrink-0 mt-0.5" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
               <address className="not-italic">{SITE.address}</address>
@@ -69,8 +69,8 @@ export default function Footer() {
         </div>
 
         <div>
-          <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-wide mb-4">Good to know</h3>
-          <ul className="space-y-3 text-sm text-slate-600">
+          <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-wide mb-4 font-airbnb">Good to know</h3>
+          <ul className="space-y-3 text-sm text-slate-600 font-airbnb">
             <li className="flex items-center gap-2">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-brand-500 shrink-0" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
               Check-in 14:00 · Check-out 10:00
@@ -91,11 +91,11 @@ export default function Footer() {
         </div>
       </Container>
 
-      <div className="border-t border-brand-100 bg-white">
+      <div className="border-t border-sand-200 bg-white">
         <Container size="xl" className="flex flex-col items-center justify-between gap-3 py-6 sm:flex-row">
-          <p className="text-xs text-slate-500">© {new Date().getFullYear()} {SITE.name}. All rights reserved.</p>
-          <p className="text-xs text-slate-500">Club Mykonos · Langebaan · West Coast, South Africa</p>
-          <div className="flex items-center gap-4 text-xs text-slate-500">
+          <p className="text-xs text-slate-500 font-airbnb">© {new Date().getFullYear()} {SITE.name}. All rights reserved.</p>
+          <p className="text-xs text-slate-500 font-airbnb">Club Mykonos · Langebaan · West Coast, South Africa</p>
+          <div className="flex items-center gap-4 text-xs text-slate-500 font-airbnb">
             <Link href="/privacy" className="hover:text-brand-700 transition-colors">Privacy</Link>
             <Link href="/terms" className="hover:text-brand-700 transition-colors">Terms</Link>
             <Link href="/cancellation" className="hover:text-brand-700 transition-colors">Cancellation Policy</Link>

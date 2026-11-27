@@ -42,10 +42,8 @@ export default function UnitFilters({ units }: { units: Unit[] }) {
   }, [units, bedrooms, view, minSleeps, maxPrice, sort]);
 
   const selectCls = cn(
-    "w-full rounded-xl border bg-white px-4 py-3 text-sm text-slate-700 transition-all duration-150",
-    "border-sand-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 focus:outline-none",
-    "hover:border-brand-300 appearance-none bg-no-repeat bg-right pr-10",
-    "bg-[url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E\")] bg-center"
+    "input-base w-full appearance-none",
+    "bg-[url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E\")] bg-center bg-no-repeat bg-right pr-10"
   );
 
   const filterGroups = [
@@ -121,14 +119,14 @@ export default function UnitFilters({ units }: { units: Unit[] }) {
       <div className="mb-6 rounded-2xl border border-sand-200 bg-white p-5 shadow-card grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         {filterGroups.map((group) => (
           <label key={group.label} className="text-sm">
-            <span className="block font-medium text-slate-700 mb-1.5">{group.label}</span>
+            <span className="block font-medium text-slate-700 mb-1.5 font-airbnb">{group.label}</span>
             {group.select}
           </label>
         ))}
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-        <p className="text-sm text-slate-500" aria-live="polite">
+        <p className="text-sm text-slate-500 font-airbnb" aria-live="polite">
           {filtered.length} apartment{filtered.length === 1 ? "" : "s"} found
         </p>
         {filtered.length > 0 && (
@@ -141,7 +139,7 @@ export default function UnitFilters({ units }: { units: Unit[] }) {
             ]
               .filter((f) => f.active)
               .map((f) => (
-                <Badge key={f.key} variant="outline" className="gap-1.5">
+                <Badge key={f.key} variant="outline" className="gap-1.5 font-airbnb">
                   {f.label}
                   <button
                     type="button"
@@ -160,8 +158,8 @@ export default function UnitFilters({ units }: { units: Unit[] }) {
       {filtered.length === 0 ? (
         <div className="rounded-2xl border-2 border-dashed border-sand-200 p-12 text-center">
           <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="mx-auto text-sand-300 mb-4"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-          <p className="text-lg font-medium text-slate-600">No apartments match those filters</p>
-          <p className="mt-2 text-slate-500">Try widening your search or clearing some filters.</p>
+          <p className="text-lg font-medium text-slate-600 font-airbnb">No apartments match those filters</p>
+          <p className="mt-2 text-slate-500 font-airbnb">Try widening your search or clearing some filters.</p>
         </div>
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

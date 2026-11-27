@@ -12,7 +12,7 @@ export default function UnitCard({ unit }: { unit: Unit }) {
   const isFlagship = unit.slug === "beachfront-3br";
 
   return (
-    <article className="group relative flex h-full flex-col overflow-hidden rounded-2xl bg-white shadow-card transition-all duration-300 hover:shadow-card-hover hover:-translate-y-1">
+    <article className="group relative flex h-full flex-col overflow-hidden rounded-2xl bg-white shadow-card transition-shadow-card hover:shadow-card-hover hover:-translate-y-1">
       <Link href={`/units/${unit.slug}`} className="relative block aspect-[4/3] overflow-hidden zoom-hover" aria-label={`View ${unit.name} details`}>
         <Image
           src={unit.images[0] ?? "/images/units/placeholder.svg"}
@@ -47,7 +47,9 @@ export default function UnitCard({ unit }: { unit: Unit }) {
             </Link>
           </h3>
           {isFlagship && (
-            <Badge variant="accent" size="sm">6 Sleeper · 3 Bed · Private Braai</Badge>
+            <Badge variant="accent" size="sm">
+              6 Sleeper · 3 Bed · Private Braai
+            </Badge>
           )}
         </div>
         <p className="text-sm text-slate-600 line-clamp-2 mb-3">{unit.tagline}</p>

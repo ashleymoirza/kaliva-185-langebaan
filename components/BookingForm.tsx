@@ -175,13 +175,11 @@ export default function BookingForm({
   }
 
   const inputCls = cn(
-    "w-full rounded-xl border bg-white px-4 py-3.5 text-sm text-slate-800 transition-all duration-150",
-    "placeholder:text-slate-400",
-    "focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 focus:outline-none",
-    "hover:border-brand-300"
+    "input-base",
+    "w-full"
   );
 
-  const labelCls = "block text-sm font-medium text-slate-700 mb-1.5";
+  const labelCls = "label-base";
 
   if (done) {
     return (
@@ -190,13 +188,13 @@ export default function BookingForm({
           <div className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-success-100 text-success-600 mb-6">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
           </div>
-          <h2 className="text-2xl font-bold text-success-900">Thank you — request received</h2>
-          <p className="mt-3 text-slate-700 max-w-md mx-auto">{done.message}</p>
+          <h2 className="text-2xl font-bold text-success-900 font-airbnb">Thank you — request received</h2>
+          <p className="mt-3 text-slate-700 max-w-md mx-auto font-airbnb">{done.message}</p>
           {done.bookingId && (
             <p className="mt-4 text-sm text-success-700 font-mono">Reference: {done.bookingId.slice(0, 8).toUpperCase()}</p>
           )}
-          <p className="mt-6 text-sm text-slate-600">We&apos;ll email {email} to confirm availability and next steps.</p>
-          <LinkButton href="/" variant="primary" size="lg" className="mt-8 inline-flex">
+          <p className="mt-6 text-sm text-slate-600 font-airbnb">We&apos;ll email {email} to confirm availability and next steps.</p>
+          <LinkButton href="/" variant="stripe-primary" size="lg" className="mt-8 inline-flex">
             Back to home
           </LinkButton>
         </div>
@@ -210,8 +208,8 @@ export default function BookingForm({
     <Container size="xl" className="py-14">
       <header className="mb-10">
         <Badge variant="brand" className="mb-4 inline-flex">Kaliva 185 Langebaan</Badge>
-        <h1 className="text-4xl font-extrabold tracking-tight text-slate-900">Book your stay</h1>
-        <p className="mt-3 max-w-2xl text-lg text-slate-600">
+        <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 font-airbnb">Book your stay</h1>
+        <p className="mt-3 max-w-2xl text-lg text-slate-600 font-airbnb">
           Choose your dates to see a live, all-inclusive price. Pay securely with PayFast, Stripe or Ozow,
           or send an enquiry to pay later.
         </p>
@@ -222,14 +220,14 @@ export default function BookingForm({
         {["dates", "details", "payment"].map((s, i) => (
           <div key={s} className="flex items-center">
             <div className={cn(
-              "flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold transition-all",
+              "flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold transition-all font-airbnb",
               step === s || (i < ["dates", "details", "payment"].indexOf(step))
                 ? "bg-brand-600 text-white"
                 : "bg-sand-100 text-sand-500"
             )}>
               {i + 1}
             </div>
-            <span className={cn("ml-2 text-sm font-medium", step === s ? "text-brand-700" : "text-slate-500")}>
+            <span className={cn("ml-2 text-sm font-medium font-airbnb", step === s ? "text-brand-700" : "text-slate-500")}>
               {s.charAt(0).toUpperCase() + s.slice(1)}
             </span>
             {i < 2 && <div className={cn("hidden w-20 h-0.5 mx-2 rounded", step !== "dates" ? "bg-brand-600" : "bg-sand-200")} />}
@@ -241,15 +239,15 @@ export default function BookingForm({
         <div className="space-y-6">
           {/* Step 1: Dates & Unit */}
           {step === "dates" && (
-            <fieldset className="rounded-2xl border border-sand-200 bg-white p-6 shadow-card transition-shadow-card">
-              <legend className="px-2 text-sm font-semibold text-slate-900 mb-4 flex items-center gap-2">
+            <fieldset className="rounded-2xl border border-sand-200 bg-white p-6 shadow-card transition-shadow-card card-airbnb">
+              <legend className="px-2 text-sm font-semibold text-slate-900 mb-4 flex items-center gap-2 font-airbnb">
                 <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-brand-100 text-brand-700 font-bold text-sm">1</span>
                 Your stay
               </legend>
               <div className="grid gap-5 sm:grid-cols-2">
                 <label className="text-sm sm:col-span-2">
                   <span className={labelCls}>Apartment</span>
-                  <select className={inputCls} value={unitSlug} onChange={(e) => setUnitSlug(e.target.value)}>
+                  <select className={cn(inputCls, "appearance-none bg-no-repeat bg-right pr-10", "bg-[url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E\")] bg-center")} value={unitSlug} onChange={(e) => setUnitSlug(e.target.value)}>
                     {units.map((u) => (
                       <option key={u.slug} value={u.slug}>
                         {u.name} · sleeps {u.sleeps} · from {formatZAR(u.basePriceCents)}/night
@@ -267,7 +265,7 @@ export default function BookingForm({
                     onChange={(e) => { setCheckIn(e.target.value); if (!checkOut || e.target.value >= checkOut) setCheckOut(""); }}
                     aria-invalid={!!errors.checkIn}
                   />
-                  {errors.checkIn && <span className="mt-1.5 text-xs text-error-600 flex items-center gap-1"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>{errors.checkIn}</span>}
+                  {errors.checkIn && <span className="mt-1.5 text-xs text-error-600 flex items-center gap-1 font-airbnb"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>{errors.checkIn}</span>}
                 </label>
                 <label className="text-sm">
                   <span className={labelCls}>Check-out</span>
@@ -295,7 +293,7 @@ export default function BookingForm({
               {blockedInRange.length > 0 && (
                 <div className="mt-4 rounded-xl bg-error-50 p-3.5 flex items-start gap-3">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-error-500 shrink-0 mt-0.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                  <div className="text-sm text-error-700">Some selected dates are unavailable. Please choose different dates.</div>
+                  <div className="text-sm text-error-700 font-airbnb">Some selected dates are unavailable. Please choose different dates.</div>
                 </div>
               )}
               {quote && (
@@ -304,8 +302,8 @@ export default function BookingForm({
                     <div className="flex items-center gap-3">
                       <div className="h-10 w-10 rounded-xl bg-brand-100 flex items-center justify-center text-brand-600"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
                       <div>
-                        <p className="text-sm font-medium text-slate-900">{nights} night{nights !== 1 ? "s" : ""} stay</p>
-                        <p className="text-xs text-slate-500">{formatZAR(quote.totalCents)} total</p>
+                        <p className="text-sm font-medium text-slate-900 font-airbnb">{nights} night{nights !== 1 ? "s" : ""} stay</p>
+                        <p className="text-xs text-slate-500 font-airbnb">{formatZAR(quote.totalCents)} total</p>
                       </div>
                     </div>
                     <Badge variant="success">{formatZAR(quote.totalCents)}</Badge>
@@ -313,7 +311,7 @@ export default function BookingForm({
                 </div>
               )}
               <div className="mt-6 flex gap-3">
-                <Button type="button" variant="secondary" size="lg" className="flex-1" onClick={() => setStep("details")} disabled={!canProceedFromDates}>
+                <Button type="button" variant="stripe-ghost" size="lg" className="flex-1" onClick={() => setStep("details")} disabled={!canProceedFromDates}>
                   Continue to guest details
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </Button>
@@ -323,8 +321,8 @@ export default function BookingForm({
 
           {/* Step 2: Guest Details */}
           {step === "details" && (
-            <fieldset className="rounded-2xl border border-sand-200 bg-white p-6 shadow-card transition-shadow-card">
-              <legend className="px-2 text-sm font-semibold text-slate-900 mb-4 flex items-center gap-2">
+            <fieldset className="rounded-2xl border border-sand-200 bg-white p-6 shadow-card transition-shadow-card card-airbnb">
+              <legend className="px-2 text-sm font-semibold text-slate-900 mb-4 flex items-center gap-2 font-airbnb">
                 <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-brand-100 text-brand-700 font-bold text-sm">2</span>
                 Guest details
               </legend>
@@ -332,29 +330,29 @@ export default function BookingForm({
                 <label className="text-sm">
                   <span className={cn(labelCls, errors.name && "text-error-600")}>Full name</span>
                   <input className={cn(inputCls, errors.name && "border-error-500 focus:border-error-500 focus:ring-error-500/20")} value={name} onChange={(e) => setName(e.target.value)} required />
-                  {errors.name && <span className="mt-1.5 text-xs text-error-600 flex items-center gap-1"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>{errors.name}</span>}
+                  {errors.name && <span className="mt-1.5 text-xs text-error-600 flex items-center gap-1 font-airbnb"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>{errors.name}</span>}
                 </label>
                 <label className="text-sm">
                   <span className={cn(labelCls, errors.email && "text-error-600")}>Email</span>
                   <input type="email" className={cn(inputCls, errors.email && "border-error-500 focus:border-error-500 focus:ring-error-500/20")} value={email} onChange={(e) => setEmail(e.target.value)} required />
-                  {errors.email && <span className="mt-1.5 text-xs text-error-600 flex items-center gap-1"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>{errors.email}</span>}
+                  {errors.email && <span className="mt-1.5 text-xs text-error-600 flex items-center gap-1 font-airbnb"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>{errors.email}</span>}
                 </label>
                 <label className="text-sm">
                   <span className={cn(labelCls, errors.phone && "text-error-600")}>Mobile number</span>
                   <input type="tel" className={cn(inputCls, errors.phone && "border-error-500 focus:border-error-500 focus:ring-error-500/20")} value={phone} onChange={(e) => setPhone(e.target.value)} required />
-                  {errors.phone && <span className="mt-1.5 text-xs text-error-600 flex items-center gap-1"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>{errors.phone}</span>}
+                  {errors.phone && <span className="mt-1.5 text-xs text-error-600 flex items-center gap-1 font-airbnb"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>{errors.phone}</span>}
                 </label>
                 <label className="text-sm sm:col-span-2">
                   <span className={labelCls}>Special requests (optional)</span>
-                  <textarea className={inputCls} rows={3} maxLength={1000} value={requests} onChange={(e) => setRequests(e.target.value)} placeholder="Arrival time, cot needed, celebrating an occasion…" />
+                  <textarea className={cn(inputCls, "min-h-[100px] resize-y")} rows={3} maxLength={1000} value={requests} onChange={(e) => setRequests(e.target.value)} placeholder="Arrival time, cot needed, celebrating an occasion…" />
                 </label>
               </div>
               <div className="mt-6 flex gap-3">
-                <Button type="button" variant="ghost" size="lg" onClick={() => setStep("dates")}>
+                <Button type="button" variant="stripe-ghost" size="lg" onClick={() => setStep("dates")}>
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
                   Back
                 </Button>
-                <Button type="button" variant="primary" size="lg" className="flex-1" onClick={() => setStep("payment")} disabled={!canProceedFromDetails}>
+                <Button type="button" variant="stripe-primary" size="lg" className="flex-1" onClick={() => setStep("payment")} disabled={!canProceedFromDetails}>
                   Continue to payment
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </Button>
@@ -364,8 +362,8 @@ export default function BookingForm({
 
           {/* Step 3: Payment */}
           {step === "payment" && (
-            <fieldset className="rounded-2xl border border-sand-200 bg-white p-6 shadow-card transition-shadow-card">
-              <legend className="px-2 text-sm font-semibold text-slate-900 mb-4 flex items-center gap-2">
+            <fieldset className="rounded-2xl border border-sand-200 bg-white p-6 shadow-card transition-shadow-card card-airbnb">
+              <legend className="px-2 text-sm font-semibold text-slate-900 mb-4 flex items-center gap-2 font-airbnb">
                 <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-brand-100 text-brand-700 font-bold text-sm">3</span>
                 Payment
               </legend>
@@ -387,30 +385,30 @@ export default function BookingForm({
                     <div className="flex-1 flex items-center gap-4 min-w-0">
                       <div className="h-10 w-10 shrink-0 rounded-xl bg-brand-50 flex items-center justify-center text-brand-600">{opt.icon}</div>
                       <div className="min-w-0">
-                        <p className="font-medium text-slate-900 truncate">{opt.label}</p>
-                        <p className="text-xs text-slate-500 truncate">{opt.desc}</p>
+                        <p className="font-medium text-slate-900 truncate font-airbnb">{opt.label}</p>
+                        <p className="text-xs text-slate-500 truncate font-airbnb">{opt.desc}</p>
                       </div>
                     </div>
                   </label>
                 ))}
               </div>
-              <div className="mt-5 flex items-start gap-3 text-xs text-slate-500 p-4 rounded-xl bg-sand-50">
+              <div className="mt-5 flex items-start gap-3 text-xs text-slate-500 p-4 rounded-xl bg-sand-50 font-airbnb">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-brand-500 shrink-0 mt-0.5"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                 <span>Secure checkout. Your card details are entered on the payment provider&apos;s site — never stored by us.</span>
               </div>
               <div className="mt-6 flex gap-3">
-                <Button type="button" variant="ghost" size="lg" onClick={() => setStep("details")}>
+                <Button type="button" variant="stripe-ghost" size="lg" onClick={() => setStep("details")}>
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
                   Back
                 </Button>
                 <label className="flex flex-1 items-center gap-3 cursor-pointer">
                   <input type="checkbox" className="h-4 w-4 rounded border-sand-300 text-brand-600 focus:ring-2 focus:ring-brand-500/20" checked={acceptTerms} onChange={(e) => setAcceptTerms(e.target.checked)} required />
-                  <span className="text-sm text-slate-700">I accept the <a href="/terms" className="underline hover:text-brand-700">terms & conditions</a>, <a href="/cancellation" className="underline hover:text-brand-700">cancellation policy</a> and house rules. Check-in 14:00, check-out 10:00.</span>
+                  <span className="text-sm text-slate-700 font-airbnb">I accept the <a href="/terms" className="underline hover:text-brand-700">terms & conditions</a>, <a href="/cancellation" className="underline hover:text-brand-700">cancellation policy</a> and house rules. Check-in 14:00, check-out 10:00.</span>
                 </label>
               </div>
-              {errors.acceptTerms && <p className="mt-2 text-xs text-error-600">{errors.acceptTerms}</p>}
-              {errors._ && <div className="mt-4 rounded-xl bg-error-50 p-3.5 text-sm text-error-700 flex items-center gap-2"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>{errors._}</div>}
-              <Button type="submit" disabled={!canSubmit} size="xl" className="w-full py-5 text-base">
+              {errors.acceptTerms && <p className="mt-2 text-xs text-error-600 font-airbnb">{errors.acceptTerms}</p>}
+              {errors._ && <div className="mt-4 rounded-xl bg-error-50 p-3.5 text-sm text-error-700 flex items-center gap-2 font-airbnb"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>{errors._}</div>}
+              <Button type="submit" disabled={!canSubmit} size="xl" className="w-full py-5 text-base font-stripe" variant="stripe-primary">
                 {submitting
                   ? "Processing…"
                   : quote && quote.depositPercent > 0 && quote.depositPercent < 100
@@ -418,7 +416,7 @@ export default function BookingForm({
                     : "Confirm booking"}
               </Button>
               {quote && quote.depositPercent > 0 && quote.depositPercent < 100 && (
-                <p className="text-center text-xs text-slate-500">
+                <p className="text-center text-xs text-slate-500 font-airbnb">
                   You pay {formatZAR(quote.depositCents)} now. The balance of {formatZAR(quote.balanceCents)} is paid on arrival.
                 </p>
               )}
@@ -427,9 +425,9 @@ export default function BookingForm({
 
           {/* Mobile step navigation */}
           <div className="lg:hidden flex gap-3">
-            <Button type="button" variant="ghost" size="md" className="flex-1" onClick={() => setStep("dates")}>1. Dates</Button>
-            <Button type="button" variant="ghost" size="md" className="flex-1" onClick={() => setStep("details")}>2. Details</Button>
-            <Button type="button" variant="ghost" size="md" className="flex-1" onClick={() => setStep("payment")}>3. Payment</Button>
+            <Button type="button" variant="stripe-ghost" size="md" className="flex-1" onClick={() => setStep("dates")}>1. Dates</Button>
+            <Button type="button" variant="stripe-ghost" size="md" className="flex-1" onClick={() => setStep("details")}>2. Details</Button>
+            <Button type="button" variant="stripe-ghost" size="md" className="flex-1" onClick={() => setStep("payment")}>3. Payment</Button>
           </div>
         </div>
 
@@ -438,9 +436,9 @@ export default function BookingForm({
           {quote ? (
             <PricingBreakdown quote={quote} />
           ) : (
-            <div className="rounded-2xl border-2 border-dashed border-sand-200 p-8 text-center">
+            <div className="rounded-2xl border-2 border-dashed border-sand-200 p-8 text-center card-airbnb">
               <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="mx-auto text-sand-300 mb-4"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-              <p className="text-slate-500">{loadingQuote ? "Calculating your best price…" : "Select your dates to see a live price. Minimum 2 nights (3 in peak season)."}</p>
+              <p className="text-slate-500 font-airbnb">{loadingQuote ? "Calculating your best price…" : "Select your dates to see a live price. Minimum 2 nights (3 in peak season)."}</p>
             </div>
           )}
         </aside>

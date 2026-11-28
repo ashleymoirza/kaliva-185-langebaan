@@ -210,9 +210,9 @@ services:
       - ./nginx/www:/var/www/letsencrypt:ro
     networks:
       - kaliva-external
-    depends_on:
-      - app-staging
-      - app-production
+    # depends_on:
+    #   - app-staging
+    #   - app-production
     healthcheck:
       test: ["CMD", "nginx", "-t"]
       interval: 30s

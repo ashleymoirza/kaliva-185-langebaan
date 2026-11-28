@@ -106,92 +106,92 @@ services:
           memory: 4G
 
   # ─────────────────────────────────────────────────────────────
-  # Next.js Application (Staging)
-  # ─────────────────────────────────────────────────────────────
-  app-staging:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: runner
-    container_name: kaliva185-app-staging
-    restart: unless-stopped
-    environment:
-      NODE_ENV: production
-      PORT: 3000
-      DATABASE_URL: postgresql://kaliva:${POSTGRES_PASSWORD}@postgres:5432/kaliva185_staging?schema=public
-      REDIS_URL: redis://redis:6379
-      OLLAMA_BASE_URL: http://ollama:11434
-      # Other env vars loaded from .env.staging file
-    env_file:
-      - .env.staging
-    networks:
-      - kaliva-internal
-      - kaliva-external
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-      ollama:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
-    deploy:
-      resources:
-        limits:
-          cpus: '2.0'
-          memory: 2G
-        reservations:
-          cpus: '1.0'
-          memory: 1G
+    # Next.js Application (Staging) — DISABLED: Deploy via rsync + systemd
+    # ─────────────────────────────────────────────────────────────
+    # app-staging:
+    #   build:
+    #     context: .
+    #     dockerfile: Dockerfile
+    #     target: runner
+    #   container_name: kaliva185-app-staging
+    #   restart: unless-stopped
+    #   environment:
+    #     NODE_ENV: production
+    #     PORT: 3000
+    #     DATABASE_URL: postgresql://kaliva:***@postgres:5432/kaliva185_staging?schema=public
+    #     REDIS_URL: redis://redis:6379
+    #     OLLAMA_BASE_URL: http://ollama:11434
+    #     # Other env vars loaded from .env.staging file
+    #   env_file:
+    #     - .env.staging
+    #   networks:
+    #     - kaliva-internal
+    #     - kaliva-external
+    #   depends_on:
+    #     postgres:
+    #       condition: service_healthy
+    #     redis:
+    #       condition: service_healthy
+    #     ollama:
+    #       condition: service_healthy
+    #   healthcheck:
+    #     test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+    #     interval: 30s
+    #     timeout: 10s
+    #     retries: 3
+    #     start_period: 60s
+    #   deploy:
+    #     resources:
+    #       limits:
+    #         cpus: '2.0'
+    #         memory: 2G
+    #       reservations:
+    #         cpus: '1.0'
+    #         memory: 1G
 
-  # ─────────────────────────────────────────────────────────────
-  # Next.js Application (Production)
-  # ─────────────────────────────────────────────────────────────
-  app-production:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: runner
-    container_name: kaliva185-app-production
-    restart: unless-stopped
-    environment:
-      NODE_ENV: production
-      PORT: 3000
-      DATABASE_URL: postgresql://kaliva:${POSTGRES_PASSWORD}@postgres:5432/kaliva185_prod?schema=public
-      REDIS_URL: redis://redis:6379
-      OLLAMA_BASE_URL: http://ollama:11434
-      # Other env vars loaded from .env.production file
-    env_file:
-      - .env.production
-    networks:
-      - kaliva-internal
-      - kaliva-external
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-      ollama:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
-    deploy:
-      resources:
-        limits:
-          cpus: '2.0'
-          memory: 2G
-        reservations:
-          cpus: '1.0'
-          memory: 1G
+    # ─────────────────────────────────────────────────────────────
+    # Next.js Application (Production) — DISABLED: Deploy via rsync + systemd
+    # ─────────────────────────────────────────────────────────────
+    # app-production:
+    #   build:
+    #     context: .
+    #     dockerfile: Dockerfile
+    #     target: runner
+    #   container_name: kaliva185-app-production
+    #   restart: unless-stopped
+    #   environment:
+    #     NODE_ENV: production
+    #     PORT: 3000
+    #     DATABASE_URL: postgresql://kaliva:***@postgres:5432/kaliva185_prod?schema=public
+    #     REDIS_URL: redis://redis:6379
+    #     OLLAMA_BASE_URL: http://ollama:11434
+    #     # Other env vars loaded from .env.production file
+    #   env_file:
+    #     - .env.production
+    #   networks:
+    #     - kaliva-internal
+    #     - kaliva-external
+    #   depends_on:
+    #     postgres:
+    #       condition: service_healthy
+    #     redis:
+    #       condition: service_healthy
+    #     ollama:
+    #       condition: service_healthy
+    #   healthcheck:
+    #     test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+    #     interval: 30s
+    #     timeout: 10s
+    #     retries: 3
+    #     start_period: 60s
+    #   deploy:
+    #     resources:
+    #       limits:
+    #         cpus: '2.0'
+    #         memory: 2G
+    #       reservations:
+    #         cpus: '1.0'
+    #         memory: 1G
 
   # ─────────────────────────────────────────────────────────────
   # Nginx Reverse Proxy

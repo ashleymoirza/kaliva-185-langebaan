@@ -65,38 +65,38 @@ services:
           memory: 512M
 
   # ─────────────────────────────────────────────────────────────
-  # Ollama (Local AI for welcome messages)
-  # ─────────────────────────────────────────────────────────────
-  ollama:
-    image: ollama/ollama:latest
-    container_name: kaliva185-ollama
-    restart: unless-stopped
-    network_mode: host
-    environment:
-      OLLAMA_HOST: 0.0.0.0:11434
-      OLLAMA_ORIGINS: "*"
-      OLLAMA_KEEP_ALIVE: "24h"
-      OLLAMA_NUM_PARALLEL: "2"
-      OLLAMA_MAX_LOADED_MODELS: "2"
-      OLLAMA_FLASH_ATTENTION: "1"
-    volumes:
-      - ollama_data:/root/.ollama
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
-    deploy:
-      resources:
-        limits:
-          cpus: '1.5'
-          memory: 4G
-        reservations:
-          cpus: '0.5'
-          memory: 2G
+    # Ollama (Local AI) — RUNNING ON HOST, NOT IN CONTAINER
+    # ─────────────────────────────────────────────────────────────
+    # ollama:
+    #   image: ollama/ollama:latest
+    #   container_name: kaliva185-ollama
+    #   restart: unless-stopped
+    #   network_mode: host
+    #   environment:
+    #     OLLAMA_HOST: 0.0.0.0:11434
+    #     OLLAMA_ORIGINS: "*"
+    #     OLLAMA_KEEP_ALIVE: "24h"
+    #     OLLAMA_NUM_PARALLEL: "2"
+    #     OLLAMA_MAX_LOADED_MODELS: "2"
+    #     OLLAMA_FLASH_ATTENTION: "1"
+    #   volumes:
+    #     - ollama_data:/root/.ollama
+    #   healthcheck:
+    #     test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+    #     interval: 30s
+    #     timeout: 10s
+    #     retries: 3
+    #     start_period: 60s
+    #   deploy:
+    #     resources:
+    #       limits:
+    #         cpus: '1.5'
+    #         memory: 4G
+    #       reservations:
+    #         cpus: '0.5'
+    #         memory: 2G
 
-  # ─────────────────────────────────────────────────────────────
+    # ─────────────────────────────────────────────────────────────
     # Next.js Application (Staging) — DISABLED: Deploy via rsync + systemd
     # ─────────────────────────────────────────────────────────────
     # app-staging:

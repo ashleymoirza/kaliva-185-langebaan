@@ -3,6 +3,7 @@ import { getDraft, getLiveLayout } from "@/lib/builder/store";
 import { getAdminSession } from "@/lib/auth";
 import BlockRenderer from "@/components/blocks/BlockRenderer";
 import { SITE } from "@/lib/site";
+import { ShareButton } from "@/components/ShareButton";
 
 export const dynamic = "force-dynamic";
 
@@ -13,16 +14,13 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
 
-export default async function HomePage({
-  searchParams,
-}: {
+export default async function HomePage({searchParams}: {
   searchParams: Promise<{ preview?: string }>;
 }) {
   const sp = await searchParams;
   // Admins can preview the unpublished draft with ?preview=1
   const isAdmin = sp.preview === "1" ? await getAdminSession() : null;
   const layout = isAdmin ? await getDraft("home") : (await getLiveLayout("home")).layout;
-
   const faqBlock = layout.blocks.find((b) => b.type === "faq" && b.visible);
   const faqItems = Array.isArray(faqBlock?.props.items) ? (faqBlock!.props.items as { q?: string; a?: string }[]) : [];
 
@@ -51,11 +49,32 @@ export default async function HomePage({
 
   return (
     <>
+
       <BlockRenderer layout={layout} />
       {faqJsonLd && (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{__html: JSON.stringify(faqJsonLd)}} />
       )}
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(lodgingJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{__html: JSON.stringify(lodgingJsonLd)}} />
+
+      {/* Share & Save Section */}
+      <div className="bg-white shadow-card sticky-top inset-x-0 z-50 py-4 bg-white/80 backdrop-filter-blur">
+        <div className="max-w-6xl mx-auto px-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <ShareButton
+              bookingId="share-demo"
+              depositPercent={50}
+              onShare={(text) => {
+                // Could trigger analytics or lead capture here
+                console.log("Shared:", text);
+              }}
+            />
+          </div>
+          <div className="text-sm text-slate-500">
+            Share your booking and save 5% on your next stay
+          </div>
+        </div>
+      </div>
+
     </>
   );
 }

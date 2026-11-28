@@ -109,8 +109,6 @@ model EnquiryMessage {
   author    String
   body      String
   createdAt DateTime @default(now())
-
-  @@index([bookingId])
 }
 
 model BlockedDate {
@@ -123,11 +121,33 @@ model BlockedDate {
   @@unique([unitSlug, date])
 }
 
-// A single JSON blob holding the admin-tunable pricing configuration.
-model PricingConfig {
-  id        String   @id @default("default")
-  data      Json
-  updatedAt DateTime @updatedAt
+// A lead captured from the viral "Share & Save" mechanic or landing page.
+model Lead {
+  id              String    @id @default(cuid())
+  email           String    @unique
+  name            String?
+  phone           String?
+  source          String?   // e.g., "share_link", "meta_ad", "direct"
+  referralId      String?   // If this lead came from another user's share link
+  status          String    @default("new") // new, contacted, converted, cancelled
+  visitedAt       DateTime  @default(now())
+  bookedAt        DateTime?
+  bookingId       String?   // If this lead converted to a booking
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+// Breakage fee tracking for deposits held against damages.
+model BreakageFee {
+  id              String    @id @default(cuid())
+  bookingId       String
+  amountCents     Int       // Amount in cents (positive = fee, negative = refund)
+  status          String    @default("pending") // pending, confirmed, refunded
+  reason          String?   // Why the fee was applied
+  appliedAt       DateTime?
+  resolvedAt      DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 }
 
 // Referral/UTM tracking for Meta ads, keyed by the UTM parameters captured.

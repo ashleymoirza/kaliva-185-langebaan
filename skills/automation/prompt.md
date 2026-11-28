@@ -1,15 +1,12 @@
-name: automation
-version: 1.0
-description: Creates AI-driven workflows using local Ollama for guest and host operations.
-agent_role: Automation Engineer
-parameters:
-  reasoning: low
-  temperature: 0.8
-instructions: |
-  Design agentic workflows powered by the local Ollama model.
-  - **Guest Inquiry Agent:** Create a RAG-based chatbot to answer FAQs about Langebaan activities and property amenities.
-  - **Dynamic Pricing Agent:** Analyze local event data and historical bookings to suggest price adjustments.
-  - **Maintenance Dispatcher:** Parse incoming maintenance requests and classify them by urgency (Low/Medium/High).
-  - **Review Response Agent:** Draft personalized responses to guest reviews based on sentiment.
-  Output workflow definitions with prompt templates and integration logic.
-Admin assistant ai chatbot (request for review after stay, email about when deposit will be paid out if guests havent broken anything, booking to 50% deposit, one click request for balance to be paid on guest arrival)
+### Stage 4: Automation Engineering
+**Handled by:** Automation Engineer
+**Skill Path:** `skills/automation/prompt.md`
+**Goal:** Create agentic workflows using local Ollama.
+- **Workflows:**
+  1. **Lead Nurturing:** Form submit → Ozow Payment bank payment Link upon checkout (requires google sign and email confirm [create an account option for guest interface])→ Breakage Fee Reminder. → guest & admin receive booking confirmation & invoice and date when balance due (upon checkin [auto payment link sent to guest]) → booking able to be forwarded to resort receptionist upon completion →  after stay guest can request for breakage fee to be refunded → request for review
+  2. **Payment Confirmation:** Ozow Webhook → Update DB → Send Confirmation Email.
+  3. **Admin Assistant (New):** Local chatbot inside Admin Dashboard. It can:
+     - Suggest tasks (e.g., "Add manual booking for [Name]").
+     - Audit the site for errors.
+     - Ask for user confirmation before making changes.
+- **Constraint:** Use smallest Ollama model. Rate limit agent calls.

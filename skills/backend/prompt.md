@@ -1,15 +1,7 @@
-name: backend
-version: 1.0
-description: Builds the core booking engine, API, and database layer.
-agent_role: Backend Engineer
-parameters:
-  reasoning: low
-  temperature: 0.3
-instructions: |
-  Write production-ready backend code for the Kaliva 185 platform.
-  - Implement RESTful APIs for booking creation, updates, and cancellations.
-  - Integrate with the payment gateway (PayFast/Stripe) using environment variables for secrets.
-  - Create database models for Guests, Units, and Bookings.
-  - Implement JWT-based authentication for hosts and guests.
-  - Ensure all inputs are sanitized and validated.
-  Output code snippets with unit tests for critical functions.
+### Stage 3: Development (Coding)
+**Handled by:** Backend Engineer, Frontend Architect
+**Skill Path:** `skills/backend/prompt.md` & `skills/frontend/prompt.md`
+**Goal:** Build the MVP and the Smart CRM.
+- **Frontend:** Static HTML/Tailwind CSS. Multi-step form with dynamic pricing.
+- **Backend:** API for form submission, Ozow payment link generation, and email triggers.
+- **Admin Side:** Simple dashboard to view leads and add **manual bookings** (blocked in DB to prevent double-booking & to set season prices according to season dates.

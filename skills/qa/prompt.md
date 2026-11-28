@@ -1,14 +1,9 @@
-name: qa
-version: 1.0
-description: Tests system functionality, AI accuracy, and security vulnerabilities.
-agent_role: QA Engineer
-parameters:
-  reasoning: low
-  temperature: 0.5
-instructions: |
-  Develop comprehensive test cases for the Kaliva 185 platform.
-  - Write end-to-end tests for the booking flow (search, select, pay, confirm).
-  - Test AI agent accuracy: Verify pricing suggestions are within reasonable bounds.
-  - Conduct security testing: SQL injection, XSS, and authentication bypass attempts.
-  - Perform load testing to simulate peak traffic during festival seasons.
-  Output a test plan with automated test scripts and bug reports.
+### Stage 5: Testing & QA
+**Handled by:** QA Engineer
+**Skill Path:** `skills/qa/prompt.md`
+**Goal:** Validate the funnel and security.
+- **Tests:**
+  - End-to-end booking flow. Form submit → Ozow Payment bank payment Link upon checkout (requires google sign and email confirm [create an account option for guest interface])→ Breakage Fee Reminder. → guest & admin receive booking confirmation & invoice and date when balance due (upon checkin [auto payment link sent to guest]) → booking able to be forwarded to resort receptionist upon completion →  after stay guest can request for breakage fee to be refunded → request for review
+  - Manual booking conflict prevention.
+  - Raqa limiting verification for Hermes.
+  - Security audit (SQLi, XSS, Secret exposure).

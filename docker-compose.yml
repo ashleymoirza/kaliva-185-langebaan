@@ -71,6 +71,7 @@ services:
     image: ollama/ollama:latest
     container_name: kaliva185-ollama
     restart: unless-stopped
+    network_mode: host
     environment:
       OLLAMA_HOST: 0.0.0.0:11434
       OLLAMA_ORIGINS: "*"
@@ -80,16 +81,6 @@ services:
       OLLAMA_FLASH_ATTENTION: "1"
     volumes:
       - ollama_data:/root/.ollama
-    networks:
-      - kaliva-internal
-    # GPU support (uncomment if VPS has GPU)
-    # deploy:
-    #   resources:
-    #     reservations:
-    #       devices:
-    #         - driver: nvidia
-    #           count: 1
-    #           capabilities: [gpu]
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
       interval: 30s
